@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION observation.generate_random_patient_payload()
+CREATE OR REPLACE FUNCTION fhir.generate_random_patient_payload()
  RETURNS jsonb
  LANGUAGE plpgsql
 AS $function$
@@ -67,7 +67,7 @@ AS $function$
 	END;
 $function$;
 
-CREATE OR REPLACE FUNCTION observation.generate_random_coverage_payload()
+CREATE OR REPLACE FUNCTION fhir.generate_random_coverage_payload()
  RETURNS jsonb
  LANGUAGE plpgsql
 AS $function$
@@ -128,7 +128,7 @@ AS $function$
 	END;
 $function$;
 
-CREATE OR REPLACE FUNCTION observation.generate_random_service_request_payload()
+CREATE OR REPLACE FUNCTION fhir.generate_random_service_request_payload()
  RETURNS jsonb
  LANGUAGE plpgsql
 AS $function$
@@ -184,7 +184,7 @@ AS $function$
 	END;
 $function$;
 
-CREATE OR REPLACE FUNCTION observation.generate_random_diagnostic_report_payload()
+CREATE OR REPLACE FUNCTION fhir.generate_random_diagnostic_report_payload()
  RETURNS jsonb
  LANGUAGE plpgsql
 AS $function$
@@ -272,7 +272,7 @@ AS $function$
 	END;
 $function$;
 
-CREATE OR REPLACE FUNCTION observation.generate_random_data(max integer)
+CREATE OR REPLACE FUNCTION fhir.generate_random_data(max integer)
  RETURNS boolean
  LANGUAGE plpgsql
 AS $function$
@@ -286,26 +286,26 @@ AS $function$
 		i = 0;
 		
 		while i < max loop
-			patient_id = nextval('observation.patient_id_seq');
-			coverage_id = nextval('observation.coverage_id_seq');
-			service_request_id = nextval('observation.service_request_id_seq');
-			diagnostic_report_id = nextval('observation.diagnostic_report_id_seq');
+			patient_id = nextval('fhir.patient_id_seq');
+			coverage_id = nextval('fhir.coverage_id_seq');
+			service_request_id = nextval('fhir.service_request_id_seq');
+			diagnostic_report_id = nextval('fhir.diagnostic_report_id_seq');
 	
-			INSERT INTO observation.patient
+			INSERT INTO fhir.patient
 			(id, payload)
-			VALUES(patient_id, observation.generate_random_patient_payload());
+			VALUES(patient_id, fhir.generate_random_patient_payload());
 		
-			INSERT INTO observation.coverage
+			INSERT INTO fhir.coverage
 			(id, subscriber_id, beneficiary_id, payload)
-			VALUES(coverage_id, patient_id, patient_id, observation.generate_random_coverage_payload());
+			VALUES(coverage_id, patient_id, patient_id, fhir.generate_random_coverage_payload());
 		
-			INSERT INTO observation.service_request
+			INSERT INTO fhir.service_request
 			(id, subject_id, insurance_id, payload)
-			VALUES(service_request_id, patient_id, coverage_id, observation.generate_random_service_request_payload());
+			VALUES(service_request_id, patient_id, coverage_id, fhir.generate_random_service_request_payload());
 		
-			INSERT INTO observation.diagnostic_report
+			INSERT INTO fhir.diagnostic_report
 			(id, subject_id, service_request_id, payload)
-			VALUES(diagnostic_report_id, patient_id, service_request_id, observation.generate_random_diagnostic_report_payload());
+			VALUES(diagnostic_report_id, patient_id, service_request_id, fhir.generate_random_diagnostic_report_payload());
 		
 			i = i + 1;
 			raise notice '[%/%] Patient % | Coverage % | ServiceRequest % | DiagnosticReport % criados com sucesso', i, max, patient_id, coverage_id, service_request_id, diagnostic_report_id;
